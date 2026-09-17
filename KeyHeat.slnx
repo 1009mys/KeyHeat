@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="KeyHeat/KeyHeat.vcxproj" />
+  <Project Path="KeyHeat/KeyHeat.vcxproj" Id="e1c26a29-2cd6-42a4-afb2-5e8820466619" />
 </Solution>
