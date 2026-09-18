@@ -80,8 +80,21 @@ LRESULT CALLBACK KeyboardHookProc(
         lParam);
 }
 
-int main()
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+#ifdef _DEBUG
+    AllocConsole();
+
+    FILE* fp;
+    freopen_s(&fp, "CONOUT$", "w", stdout);
+    freopen_s(&fp, "CONOUT$", "w", stderr);
+    freopen_s(&fp, "CONIN$", "r", stdin);
+
+    std::cout.clear();
+    std::cerr.clear();
+    std::cin.clear();
+#endif
+
     g_isHookEnabled = ReadHookEnabledFromRegistry();
     g_appearanceSettings = ReadAppearanceFromRegistry();
     if (g_isHookEnabled && !StartKeyboardHook())

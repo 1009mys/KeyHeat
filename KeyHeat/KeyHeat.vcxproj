@@ -113,7 +113,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Manifest>
@@ -131,7 +131,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Manifest>
@@ -139,8 +139,9 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="KeyMap.h" />
+    <ClCompile Include="KeyPopup.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SettingsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KeyPopup.h" />
