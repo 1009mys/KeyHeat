@@ -5,162 +5,6 @@
 #include <string>
 
 
-
-std::wstring ReadRegistryString(const wchar_t* valueName, const wchar_t* fallback)
-{
-	wchar_t buffer[LF_FACESIZE]{};
-	DWORD size = sizeof(buffer);
-	LONG result = RegGetValueW(
-		HKEY_CURRENT_USER,
-		kRegistryPath,
-		valueName,
-		RRF_RT_REG_SZ,
-		nullptr,
-		buffer,
-		&size);
-
-	if (result != ERROR_SUCCESS)
-	{
-		return fallback;
-	}
-
-	return buffer;
-}
-
-DWORD ReadRegistryDword(const wchar_t* valueName, DWORD fallback)
-{
-	DWORD value = fallback;
-	DWORD size = sizeof(value);
-	LONG result = RegGetValueW(
-		HKEY_CURRENT_USER,
-		kRegistryPath,
-		valueName,
-		RRF_RT_REG_DWORD,
-		nullptr,
-		&value,
-		&size);
-
-	if (result != ERROR_SUCCESS)
-	{
-		return fallback;
-	}
-
-	return value;
-}
-
-AppearanceSettings ReadAppearanceFromRegistry()
-{
-	AppearanceSettings settings{};
-	settings.fontName = ReadRegistryString(kRegistryFontName, L"Segoe UI");
-	settings.fontSize = ReadRegistryDword(kRegistryFontSize, 16);
-	settings.textColor = ReadRegistryDword(kRegistryTextColor, 0x00000000);
-	settings.monitorIndex = ReadRegistryDword(kRegistryMonitorIndex, 0);
-	return settings;
-}
-
-void WriteAppearanceToRegistry(const AppearanceSettings& settings)
-{
-	HKEY key = nullptr;
-	DWORD disposition = 0;
-	LONG result = RegCreateKeyExW(
-		HKEY_CURRENT_USER,
-		kRegistryPath,
-		0,
-		nullptr,
-		REG_OPTION_NON_VOLATILE,
-		KEY_SET_VALUE,
-		nullptr,
-		&key,
-		&disposition);
-
-	if (result == ERROR_SUCCESS)
-	{
-		RegSetValueExW(
-			key,
-			kRegistryFontName,
-			0,
-			REG_SZ,
-			reinterpret_cast<const BYTE*>(settings.fontName.c_str()),
-			static_cast<DWORD>((settings.fontName.size() + 1) * sizeof(wchar_t)));
-
-		RegSetValueExW(
-			key,
-			kRegistryFontSize,
-			0,
-			REG_DWORD,
-			reinterpret_cast<const BYTE*>(&settings.fontSize),
-			sizeof(settings.fontSize));
-
-		RegSetValueExW(
-			key,
-			kRegistryTextColor,
-			0,
-			REG_DWORD,
-			reinterpret_cast<const BYTE*>(&settings.textColor),
-			sizeof(settings.textColor));
-
-		RegSetValueExW(
-			key,
-			kRegistryMonitorIndex,
-			0,
-			REG_DWORD,
-			reinterpret_cast<const BYTE*>(&settings.monitorIndex),
-			sizeof(settings.monitorIndex));
-
-		RegCloseKey(key);
-	}
-}
-
-bool ReadHookEnabledFromRegistry()
-{
-	DWORD enabled = 0;
-	DWORD size = sizeof(enabled);
-	LONG result = RegGetValueW(
-		HKEY_CURRENT_USER,
-		kRegistryPath,
-		kRegistryValueName,
-		RRF_RT_REG_DWORD,
-		nullptr,
-		&enabled,
-		&size);
-
-	if (result != ERROR_SUCCESS)
-	{
-		return false;
-	}
-
-	return enabled != 0;
-}
-
-void WriteHookEnabledToRegistry(bool enabled)
-{
-	HKEY key = nullptr;
-	DWORD disposition = 0;
-	LONG result = RegCreateKeyExW(
-		HKEY_CURRENT_USER,
-		kRegistryPath,
-		0,
-		nullptr,
-		REG_OPTION_NON_VOLATILE,
-		KEY_SET_VALUE,
-		nullptr,
-		&key,
-		&disposition);
-
-	if (result == ERROR_SUCCESS)
-	{
-		DWORD value = enabled ? 1 : 0;
-		RegSetValueExW(
-			key,
-			kRegistryValueName,
-			0,
-			REG_DWORD,
-			reinterpret_cast<const BYTE*>(&value),
-			sizeof(value));
-		RegCloseKey(key);
-	}
-}
-
 void UpdateSettingsWindowState(HWND hwnd, bool enabled)
 {
 	SetWindowTextW(GetDlgItem(hwnd, kStatusLabelId), enabled ? L"Status: Hook Running" : L"Status: Hook Stopped");
@@ -449,7 +293,7 @@ LRESULT CALLBACK SettingsWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 				}
 			}
 
-			WriteHookEnabledToRegistry(*context->hookEnabled);
+			KHSetting::WriteHookEnabled(*context->hookEnabled);
 			UpdateSettingsWindowState(hwnd, *context->hookEnabled);
 		}
 
@@ -458,7 +302,7 @@ LRESULT CALLBACK SettingsWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 			if (context->appearanceSettings != nullptr)
 			{
 				*context->appearanceSettings = ReadAppearanceFromControls(hwnd, *context->appearanceSettings);
-				WriteAppearanceToRegistry(*context->appearanceSettings);
+				KHSetting::WriteAppearance(*context->appearanceSettings);
 			}
 		}
 

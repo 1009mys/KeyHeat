@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <commdlg.h>
 #include <string>
+#include "KHSetting.h"
 
 constexpr wchar_t kSettingsClassName[] = L"KeyHeatSettingsWindow";
 constexpr int kToggleButtonId = 1001;
@@ -17,20 +18,6 @@ constexpr int kSaveAppearanceButtonId = 1009;
 constexpr int kPickColorButtonId = 1010;
 constexpr int kMonitorLabelId = 1011;
 constexpr int kMonitorComboId = 1012;
-constexpr wchar_t kRegistryPath[] = L"Software\\KeyHeat";
-constexpr wchar_t kRegistryValueName[] = L"HookEnabled";
-constexpr wchar_t kRegistryFontName[] = L"FontName";
-constexpr wchar_t kRegistryFontSize[] = L"FontSize";
-constexpr wchar_t kRegistryTextColor[] = L"TextColor";
-constexpr wchar_t kRegistryMonitorIndex[] = L"MonitorIndex";
-
-struct AppearanceSettings
-{
-	std::wstring fontName;
-	DWORD fontSize;
-	DWORD textColor;
-	DWORD monitorIndex;
-};
 
 struct SettingsWindowContext
 {
@@ -45,27 +32,6 @@ struct MonitorEnumContext
 	HWND combo;
 	int index;
 };
-// =====================================================================================================
-// Registry read/write functions for application settings.
-// Reads a string value from the application registry key and returns fallback when missing or invalid.
-std::wstring ReadRegistryString(const wchar_t* valueName, const wchar_t* fallback);
-
-// Reads a DWORD value from the application registry key and returns fallback when missing or invalid.
-DWORD ReadRegistryDword(const wchar_t* valueName, DWORD fallback);
-
-// Loads all popup appearance settings from the registry.
-AppearanceSettings ReadAppearanceFromRegistry();
-
-// Persists all popup appearance settings to the registry.
-void WriteAppearanceToRegistry(const AppearanceSettings& settings);
-
-// Reads whether the keyboard hook is enabled from the registry.
-bool ReadHookEnabledFromRegistry();
-
-// Writes the keyboard hook enabled state to the registry.
-void WriteHookEnabledToRegistry(bool enabled);
-// =====================================================================================================
-
 // Updates controls in the settings window to reflect the current enabled state.
 void UpdateSettingsWindowState(HWND hwnd, bool enabled);
 

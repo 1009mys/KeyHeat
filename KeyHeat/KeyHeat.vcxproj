@@ -140,11 +140,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="KeyPopup.cpp" />
+    <ClCompile Include="KHSetting.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SettingsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KeyPopup.h" />
+    <ClInclude Include="KHSetting.h" />
     <ClInclude Include="SettingsWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

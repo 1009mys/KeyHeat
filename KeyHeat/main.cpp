@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <iostream>
+#include "KHSetting.h"
 #include "SettingsWindow.h"
 #include "KeyPopup.h"
 
@@ -95,8 +96,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     std::cin.clear();
 #endif
 
-    g_isHookEnabled = ReadHookEnabledFromRegistry();
-    g_appearanceSettings = ReadAppearanceFromRegistry();
+    g_isHookEnabled = KHSetting::ReadHookEnabled();
+    g_appearanceSettings = KHSetting::ReadAppearance();
     if (g_isHookEnabled && !StartKeyboardHook())
     {
         std::cerr
@@ -104,7 +105,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
             << GetLastError()
             << '\n';
         g_isHookEnabled = false;
-        WriteHookEnabledToRegistry(false);
+        KHSetting::WriteHookEnabled(false);
     }
 
     SettingsWindowContext context{};
